@@ -9,6 +9,9 @@ packages = [{include = "trading_app"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.95.1"}
+sqlalchemy = "^2.0.9"
+alembic = "^1.10.3"
+psycopg2-binary = "^2.9.6"
 
 
 [build-system]
