@@ -31,3 +31,33 @@ services:
     image: redis:7.0-alpine
     container_name: trading-redis
     hostname: redis
+
+  trading_worker:
+    container_name: trading_worker
+    image: trading_worker
+    build: .
+    hostname: worker
+    volumes:
+      - ./:/app
+    command: celery -A src.tasks.tasks:celery worker --loglevel=INFO --pool=solo
+    links:
+      - redis
+    depends_on:
+      - trading_app_db
+      - redis
+
+  trading_flower:
+    container_name: trading_flower
+    image: trading_flower
+    build: .
+    hostname: flower
+    volumes:
+      - ./:/app
+    ports:
+      - "5555:5555"
+    command: celery -A src.tasks.tasks:celery flower
+    links:
+      - redis
+    depends_on:
+      - trading_app_db
+      - redis

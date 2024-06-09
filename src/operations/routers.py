@@ -10,6 +10,8 @@ from src.database import get_async_session
 from src.operations.models import operation
 from src.operations.schemas import OperationCreate, OperationRead
 
+from src.tasks.tasks import add
+
 router = APIRouter(
     prefix="/operations",
     tags=["Operations"],
@@ -32,9 +34,10 @@ async def add_specific_operation(new_operation: OperationCreate, session: AsyncS
 
 
 @router.get("/test-redis-cache/")
-@cache(expire=10)
+@cache(expire=30)
 async def index():
     time.sleep(5)
+    add.delay(1, 2)
     return dict(hello="world")
 
 
