@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  trading_app:
+    container_name: trading_app
+    image: trading_app
+    build: .
+    volumes:
+      - ./:/app:ro
+    ports:
+      - "8012:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - trading_app_db
+
+  trading_app_db:
+    image: postgres:14.6-alpine
+    container_name: trading_app_db
+    hostname: 0.0.0.0
+    ports:
+      - 5423:5432
+    volumes:
+      - ../trading_app_db_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASS}
+      - POSTGRES_DB=${DATABASE_NAME}
