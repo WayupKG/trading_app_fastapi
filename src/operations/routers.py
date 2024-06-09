@@ -1,6 +1,8 @@
+import time
 from typing import List
 
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,4 +29,12 @@ async def add_specific_operation(new_operation: OperationCreate, session: AsyncS
     result = await session.execute(stmt)
     await session.commit()
     return {'success': result}
+
+
+@router.get("/test-redis-cache/")
+@cache(expire=10)
+async def index():
+    time.sleep(5)
+    return dict(hello="world")
+
 
